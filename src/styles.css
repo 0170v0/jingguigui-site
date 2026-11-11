@@ -3951,3 +3951,138 @@ section[id] {
     padding-top: 24px;
   }
 }
+.booking-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(12, 20, 18, 0.78);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+
+.booking-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s ease, visibility 0s;
+}
+
+.booking-modal__inner {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: 90svh;
+  overflow: auto;
+  padding: clamp(28px, 4vw, 48px);
+  background: var(--paper);
+  color: var(--ink);
+  transform: translateY(14px);
+  transition: transform 0.35s var(--ease, ease);
+}
+
+.booking-modal.is-open .booking-modal__inner {
+  transform: translateY(0);
+}
+
+.booking-modal__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(30, 42, 38, 0.2);
+  background: rgba(247, 243, 235, 0.92);
+  color: var(--ink);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.booking-modal__close:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.booking-modal__close svg {
+  width: 15px;
+  height: 15px;
+}
+
+.booking-modal__head {
+  margin-bottom: 26px;
+  padding-right: 52px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.booking-modal__head .eyebrow {
+  margin-bottom: 12px;
+}
+
+.booking-modal__head h2 {
+  font-family: var(--serif);
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.12;
+}
+
+.booking-modal__head p:last-child {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.booking-modal .booking-form .form-grid {
+  gap: 14px 18px;
+}
+
+.booking-modal .form-consent {
+  margin-top: 18px;
+}
+
+.booking-modal .form-note {
+  margin-top: 8px;
+}
+
+.booking-modal .booking-submit {
+  margin-top: 16px;
+}
+
+@media (max-width: 640px) {
+  .booking-modal {
+    padding: 10px;
+  }
+
+  .booking-modal__inner {
+    max-height: 93svh;
+    padding: 26px 20px 30px;
+  }
+
+  .booking-modal__close {
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .booking-modal__head {
+    margin-bottom: 20px;
+    padding-right: 42px;
+  }
+
+  .booking-modal__head h2 {
+    font-size: 30px;
+  }
+
+  .booking-modal .form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+}

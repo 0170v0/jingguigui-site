@@ -20,7 +20,8 @@
   const syncBodyLock = () => {
     const menuOpen = mobileMenu?.classList.contains("is-open");
     const materialOpen = doc.getElementById("material-modal")?.classList.contains("is-open");
-    body.classList.toggle("is-locked", Boolean(menuOpen || materialOpen));
+    const bookingOpen = doc.getElementById("booking-modal")?.classList.contains("is-open");
+    body.classList.toggle("is-locked", Boolean(menuOpen || materialOpen || bookingOpen));
   };
 
   const setHeaderState = () => {
@@ -322,151 +323,249 @@
      预约表单
      --------------------------------------------------------- */
 
-  const bookingForm = doc.getElementById("booking-form");
-  const formStatus = doc.getElementById("form-status");
-  const formSuccess = doc.getElementById("form-success");
-  const submitButton = bookingForm?.querySelector(".booking-submit");
-  const formEmail = (bookingForm?.dataset.formEmail || "").trim();
+  /* ---------------------------------------------------------
+     预约弹窗
+     --------------------------------------------------------- */
 
-  const showFormStatus = (message, isError = false) => {
-    if (!formStatus) return;
-    formStatus.textContent = message;
-    formStatus.classList.add("is-visible");
-    formStatus.classList.toggle("is-error", isError);
+  const bookingModal = doc.getElementById("booking-modal");
+  const bookingClose = bookingModal?.querySelector(".booking-modal__close");
+  const modalBookingForm = doc.getElementById("modal-form");
+  const modalBookingWrap = modalBookingForm?.closest("[data-booking-wrap]");
+  const bookingTriggers = [...doc.querySelectorAll("[data-booking-open]")];
+  let lastBookingTrigger = null;
+
+  const resetForm = (form) => {
+    if (!form) return;
+    const wrap = form.closest("[data-booking-wrap]");
+    const success = wrap?.querySelector("[data-form-success]");
+    const status = form.querySelector("[data-form-status]");
+    const submit = form.querySelector(".booking-submit");
+
+    form.reset();
+    form.style.display = "";
+    success?.classList.remove("is-visible");
+    if (status) {
+      status.textContent = "";
+      status.classList.remove("is-visible", "is-error");
+    }
+    if (submit) {
+      submit.disabled = false;
+      submit.textContent = submit.dataset.defaultLabel || "提交预约";
+    }
   };
 
-  const clearFormStatus = () => {
-    if (!formStatus) return;
-    formStatus.textContent = "";
-    formStatus.classList.remove("is-visible", "is-error");
+  const closeBooking = () => {
+    if (!bookingModal || !bookingModal.classList.contains("is-open")) return;
+    bookingModal.classList.remove("is-open");
+    bookingModal.setAttribute("aria-hidden", "true");
+    syncBodyLock();
+    window.setTimeout(() => resetForm(modalBookingForm), 260);
+    lastBookingTrigger?.focus({ preventScroll: true });
   };
 
-  const showFormSuccess = () => {
-    if (!bookingForm) return;
-    bookingForm.style.display = "none";
-    formSuccess?.classList.add("is-visible");
-    formSuccess?.scrollIntoView({
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "center",
+  const openBooking = (trigger) => {
+    if (!bookingModal) return;
+    closeMenu();
+    closeMaterial();
+    closeBooking();
+    resetForm(modalBookingForm);
+    lastBookingTrigger = trigger || null;
+    bookingModal.classList.add("is-open");
+    bookingModal.setAttribute("aria-hidden", "false");
+    syncBodyLock();
+    window.setTimeout(() => bookingClose?.focus({ preventScroll: true }), 40);
+  };
+
+  bookingTriggers.forEach((trigger) => {
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault();
+      openBooking(trigger);
     });
-  };
+  });
 
-  bookingForm?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    clearFormStatus();
+  bookingClose?.addEventListener("click", closeBooking);
 
-    const name = bookingForm.elements.name?.value.trim() || "";
-    const phoneRaw = bookingForm.elements.phone?.value.trim() || "";
-    const phone = phoneRaw.replace(/[\s-]/g, "");
-    const email = bookingForm.elements.email?.value.trim() || "";
-    const consent = bookingForm.elements.consent?.checked;
-    const honey = bookingForm.elements._honey?.value || "";
+  bookingModal?.addEventListener("click", (event) => {
+    if (event.target === bookingModal) closeBooking();
+  });
 
-    if (honey) {
-      showFormSuccess();
-      return;
+  bookingModal?.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab") return;
+    const focusable = [...bookingModal.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
+    )].filter((element) => element.offsetParent !== null);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && doc.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && doc.activeElement === last) {
+      event.preventDefault();
+      first.focus();
     }
+  });
 
-    if (!name) {
-      showFormStatus("请先填写称呼。", true);
-      bookingForm.elements.name?.focus();
-      return;
-    }
+  /* ---------------------------------------------------------
+     预约表单（联系区 + 弹窗各一份）
+     --------------------------------------------------------- */
 
-    const isMobile = /^1[3-9]\d{9}$/.test(phone);
-    const isLandline = /^0\d{2,3}\d{7,8}$/.test(phone);
+  const initBookingForm = (form) => {
+    if (!form) return;
+    const wrap = form.closest("[data-booking-wrap]");
+    const formStatus = form.querySelector("[data-form-status]");
+    const formSuccess = wrap?.querySelector("[data-form-success]");
+    const submitButton = form.querySelector(".booking-submit");
+    const formEmail = (form.dataset.formEmail || "").trim();
 
-    if (!isMobile && !isLandline) {
-      showFormStatus("请填写有效的手机号码或座机号码。", true);
-      bookingForm.elements.phone?.focus();
-      return;
-    }
+    if (submitButton) submitButton.dataset.defaultLabel = submitButton.textContent;
 
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showFormStatus("邮箱格式看起来不太对，可以检查一下，或留空。", true);
-      bookingForm.elements.email?.focus();
-      return;
-    }
-
-    if (!consent) {
-      showFormStatus("请先阅读并勾选隐私说明。", true);
-      bookingForm.elements.consent?.focus();
-      return;
-    }
-
-    if (!formEmail) {
-      showFormStatus("预约表单尚未接通接收邮箱，暂时无法提交。请联系网站管理员完成配置。", true);
-      return;
-    }
-
-    const payload = {
-      name,
-      phone,
-      email,
-      category: bookingForm.elements.category?.value || "",
-      budget: bookingForm.elements.budget?.value || "",
-      city: bookingForm.elements.city?.value.trim() || "",
-      message: bookingForm.elements.message?.value.trim() || "",
-      consent: "已同意隐私说明",
-      _subject: "官网预约咨询 · 鲸柜柜",
-      _template: "table",
-      _captcha: "false",
-      _honey: "",
-      page: window.location.href,
+    const showFormStatus = (message, isError = false) => {
+      if (!formStatus) return;
+      formStatus.textContent = message;
+      formStatus.classList.add("is-visible");
+      formStatus.classList.toggle("is-error", isError);
     };
 
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.textContent = "正在提交…";
-    }
+    const clearFormStatus = () => {
+      if (!formStatus) return;
+      formStatus.textContent = "";
+      formStatus.classList.remove("is-visible", "is-error");
+    };
 
-    try {
-      const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(formEmail)}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const raw = await response.text();
-      let data = {};
-
-      try {
-        data = JSON.parse(raw);
-      } catch (error) {
-        data = {};
+    const showFormSuccess = () => {
+      form.style.display = "none";
+      formSuccess?.classList.add("is-visible");
+      const isInModal = Boolean(bookingModal?.contains(form));
+      if (isInModal) {
+        bookingModal.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+      } else {
+        formSuccess?.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "center",
+        });
       }
+    };
 
-      const success = data.success === true || data.success === "true";
-      const message = String(data.message || "");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearFormStatus();
 
-      if (/activation|activate|激活/i.test(message)) {
-        showFormStatus(
-          "预约表单还需要完成一次邮箱激活。请检查接收邮箱中的 FormSubmit 激活邮件；完成激活后，再提交一次即可正常收到。",
-          true
-        );
+      const name = form.elements.name?.value.trim() || "";
+      const phoneRaw = form.elements.phone?.value.trim() || "";
+      const phone = phoneRaw.replace(/[\s-]/g, "");
+      const email = form.elements.email?.value.trim() || "";
+      const consent = form.elements.consent?.checked;
+      const honey = form.elements._honey?.value || "";
+
+      if (honey) {
+        showFormSuccess();
         return;
       }
 
-      if (!response.ok || !success) {
-        throw new Error(message || "提交失败");
+      if (!name) {
+        showFormStatus("请先填写称呼。", true);
+        form.elements.name?.focus();
+        return;
       }
 
-      showFormSuccess();
-    } catch (error) {
-      showFormStatus(
-        "提交没有成功，请检查网络后重试。如果仍然不行，请稍后再试，或通过页面上的联系方式与我们联系。",
-        true
-      );
-    } finally {
-      if (submitButton && bookingForm.style.display !== "none") {
-        submitButton.disabled = false;
-        submitButton.textContent = "提交预约";
+      const isMobile = /^1[3-9]\d{9}$/.test(phone);
+      const isLandline = /^0\d{2,3}\d{7,8}$/.test(phone);
+
+      if (!isMobile && !isLandline) {
+        showFormStatus("请填写有效的手机号码或座机号码。", true);
+        form.elements.phone?.focus();
+        return;
       }
-    }
-  });
+
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showFormStatus("邮箱格式看起来不太对，可以检查一下，或留空。", true);
+        form.elements.email?.focus();
+        return;
+      }
+
+      if (!consent) {
+        showFormStatus("请先阅读并勾选隐私说明。", true);
+        form.elements.consent?.focus();
+        return;
+      }
+
+      if (!formEmail) {
+        showFormStatus("预约表单尚未接通接收邮箱，暂时无法提交。请联系网站管理员完成配置。", true);
+        return;
+      }
+
+      const payload = {
+        name,
+        phone,
+        email,
+        category: form.elements.category?.value || "",
+        budget: form.elements.budget?.value || "",
+        city: form.elements.city?.value.trim() || "",
+        message: form.elements.message?.value.trim() || "",
+        consent: "已同意隐私说明",
+        _subject: "官网预约咨询 · 鲸柜柜",
+        _template: "table",
+        _captcha: "false",
+        _honey: "",
+        page: window.location.href,
+      };
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "正在提交…";
+      }
+
+      try {
+        const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(formEmail)}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const raw = await response.text();
+        let data = {};
+
+        try {
+          data = JSON.parse(raw);
+        } catch (error) {
+          data = {};
+        }
+
+        const success = data.success === true || data.success === "true";
+        const message = String(data.message || "");
+
+        if (/activation|activate|激活/i.test(message)) {
+          showFormStatus(
+            "预约表单还需要完成一次邮箱激活。请检查接收邮箱中的 FormSubmit 激活邮件；完成激活后，再提交一次即可正常收到。",
+            true
+          );
+          return;
+        }
+
+        if (!response.ok || !success) {
+          throw new Error(message || "提交失败");
+        }
+
+        showFormSuccess();
+      } catch (error) {
+        showFormStatus(
+          "提交没有成功，请检查网络后重试。如果仍然不行，请稍后再试，或通过页面上的联系方式与我们联系。",
+          true
+        );
+      } finally {
+        if (submitButton && form.style.display !== "none") {
+          submitButton.disabled = false;
+          submitButton.textContent = submitButton.dataset.defaultLabel || "提交预约";
+        }
+      }
+    });
+  };
+
+  [...doc.querySelectorAll("[data-booking-form]")].forEach(initBookingForm);
 
   /* ---------------------------------------------------------
      全局键盘
@@ -476,5 +575,6 @@
     if (event.key !== "Escape") return;
     closeMenu();
     closeMaterial();
+    closeBooking();
   });
 })();

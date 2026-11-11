@@ -7,6 +7,7 @@
 - 内容：`content/*.json`，可用 Pages CMS 在浏览器里改字、换图
 - 部署：Cloudflare Pages（Git 推送自动构建），也可放到任意静态托管
 - 表单：FormSubmit（配置接收邮箱后启用，不需要自建后台）
+- 预约：页头、首屏、页脚与详情页的预约按钮在当前页打开弹窗，不跳转、不滚动到底部；联系区仍保留完整表单
 
 ## 本地预览
 
@@ -52,7 +53,7 @@ public/
 src/
   template.mjs           HTML 模板（首页与全部详情页）
   styles.css             全站样式
-  main.js                导航、筛选、板材弹层、手风琴、表单
+  main.js                导航、筛选、板材弹层、预约弹窗、手风琴、表单
 scripts/
   build.mjs              零依赖构建脚本
   dev.mjs                本地静态服务器

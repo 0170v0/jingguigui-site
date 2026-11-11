@@ -76,7 +76,7 @@ function header(site, solid) {
     <nav class="desktop-nav" aria-label="主导航">
         ${desktop}
     </nav>
-    <a class="header-cta" href="${attr(contactHref)}">预约咨询</a>
+    <a class="header-cta" href="${attr(contactHref)}" data-booking-open>预约咨询</a>
     <button class="menu-toggle" type="button" aria-label="打开菜单" aria-controls="mobile-menu" aria-expanded="false">
       <span></span><span></span>
     </button>
@@ -89,7 +89,7 @@ function header(site, solid) {
   </nav>
   <div class="mobile-menu__foot">
     <span>${escapeHtml(site.contact.serviceArea)} · 全屋定制</span>
-    <a href="${attr(contactHref)}">预约一次设计沟通 →</a>
+    <a href="${attr(contactHref)}" data-booking-open>预约一次设计沟通 →</a>
   </div>
 </div>`;
 }
@@ -121,7 +121,7 @@ function footer(site, solid) {
         <ul>
           <li>服务范围：${escapeHtml(site.contact.serviceArea)}</li>
           <li>预约方式：官网预约表单</li>
-          <li><a href="${solid ? "/" : ""}#contact">开始一次设计咨询 →</a></li>
+          <li><a href="${solid ? "/" : ""}#contact" data-booking-open>开始一次设计咨询 →</a></li>
         </ul>
       </div>
     </div>
@@ -221,7 +221,7 @@ function hero(site) {
     <h1 class="hero-title">${escapeHtml(site.hero.title)}</h1>
     <p class="hero-sub">${escapeHtml(site.hero.subtitle)}</p>
     <div class="hero-actions">
-      <a class="btn btn--light" href="#contact">${escapeHtml(site.hero.primaryCta)} ${ICONS.arrow}</a>
+      <a class="btn btn--light" href="#contact" data-booking-open>${escapeHtml(site.hero.primaryCta)} ${ICONS.arrow}</a>
       <a class="btn btn--ghost" href="#projects">${escapeHtml(site.hero.secondaryCta)}</a>
     </div>
   </div>
@@ -483,11 +483,80 @@ function craft(site) {
 </section>`;
 }
 
-function contact(site) {
+function bookingForm(site, prefix) {
   const formEmail = (site.contact.formEmail || "").trim();
   const action = formEmail ? `https://formsubmit.co/${encodeURIComponent(formEmail)}` : "";
   const footnote = escapeHtml(site.contact.formNote);
+  const uid = (name) => `${prefix}-${name}`;
 
+  return `<form id="${uid("form")}" class="booking-form" data-booking-form method="POST" action="${attr(action)}" data-form-email="${attr(formEmail)}" novalidate>
+          <input type="hidden" name="_subject" value="官网预约咨询 · 鲸柜柜">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" value="${attr(url(site.seo.siteUrl, "/thanks"))}">
+          <input type="text" name="_honey" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="${uid("name")}">称呼 <span aria-hidden="true">*</span></label>
+              <input id="${uid("name")}" name="name" type="text" autocomplete="name" placeholder="怎么称呼你" required>
+            </div>
+            <div class="form-field">
+              <label for="${uid("phone")}">联系电话 <span aria-hidden="true">*</span></label>
+              <input id="${uid("phone")}" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="手机或座机" required>
+            </div>
+            <div class="form-field">
+              <label for="${uid("email")}">邮箱（选填）</label>
+              <input id="${uid("email")}" name="email" type="email" autocomplete="email" placeholder="方便接收方案资料">
+            </div>
+            <div class="form-field">
+              <label for="${uid("category")}">想了解的空间</label>
+              <select id="${uid("category")}" name="category">
+                <option value="全屋定制">全屋定制</option>
+                <option value="衣柜">衣柜</option>
+                <option value="厨房">厨房橱柜</option>
+                <option value="客厅">客厅柜体</option>
+                <option value="多功能房">书房 / 多功能房</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="${uid("budget")}">预算范围（选填）</label>
+              <select id="${uid("budget")}" name="budget">
+                <option value="暂不确定">暂不确定</option>
+                <option value="10 万以内">10 万以内</option>
+                <option value="10–20 万">10–20 万</option>
+                <option value="20–30 万">20–30 万</option>
+                <option value="30 万以上">30 万以上</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="${uid("city")}">所在区域（选填）</label>
+              <input id="${uid("city")}" name="city" type="text" placeholder="如：成都 · 武侯区">
+            </div>
+            <div class="form-field form-field--full">
+              <label for="${uid("message")}">简单说说你的需求（选填）</label>
+              <textarea id="${uid("message")}" name="message" rows="3" placeholder="户型、面积、喜欢的风格，或任何你在意的细节"></textarea>
+            </div>
+          </div>
+          <label class="form-consent">
+            <input id="${uid("consent")}" name="consent" type="checkbox" value="同意" required>
+            <span>我已阅读并同意<a href="/privacy" target="_blank" rel="noopener">隐私说明</a>，同意将以上信息用于本次设计咨询。</span>
+          </label>
+          <p class="form-note">${footnote}</p>
+          <button class="booking-submit" type="submit">${escapeHtml(site.contact.submitText)}</button>
+          <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+        </form>`;
+}
+
+function bookingSuccess(site) {
+  return `<div class="form-success" data-form-success role="status" aria-live="polite">
+          <span class="form-success__mark">${ICONS.check}</span>
+          <h4>${escapeHtml(site.contact.successTitle)}</h4>
+          <p>${escapeHtml(site.contact.successText)}</p>
+        </div>`;
+}
+
+function contact(site) {
   return `<section class="section contact" id="contact">
   <div class="container">
     <div class="contact-grid">
@@ -519,72 +588,31 @@ function contact(site) {
           <h3>预约设计咨询</h3>
           <span>01 / 03</span>
         </div>
-        <form id="booking-form" class="booking-form" method="POST" action="${attr(action)}" data-form-email="${attr(formEmail)}" novalidate>
-          <input type="hidden" name="_subject" value="官网预约咨询 · 鲸柜柜">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_next" value="${attr(url(site.seo.siteUrl, "/thanks"))}">
-          <input type="text" name="_honey" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="name">称呼 <span aria-hidden="true">*</span></label>
-              <input id="name" name="name" type="text" autocomplete="name" placeholder="怎么称呼你" required>
-            </div>
-            <div class="form-field">
-              <label for="phone">联系电话 <span aria-hidden="true">*</span></label>
-              <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="手机或座机" required>
-            </div>
-            <div class="form-field">
-              <label for="email">邮箱（选填）</label>
-              <input id="email" name="email" type="email" autocomplete="email" placeholder="方便接收方案资料">
-            </div>
-            <div class="form-field">
-              <label for="category">想了解的空间</label>
-              <select id="category" name="category">
-                <option value="全屋定制">全屋定制</option>
-                <option value="衣柜">衣柜</option>
-                <option value="厨房">厨房橱柜</option>
-                <option value="客厅">客厅柜体</option>
-                <option value="多功能房">书房 / 多功能房</option>
-                <option value="其他">其他</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label for="budget">预算范围（选填）</label>
-              <select id="budget" name="budget">
-                <option value="暂不确定">暂不确定</option>
-                <option value="10 万以内">10 万以内</option>
-                <option value="10–20 万">10–20 万</option>
-                <option value="20–30 万">20–30 万</option>
-                <option value="30 万以上">30 万以上</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label for="city">所在区域（选填）</label>
-              <input id="city" name="city" type="text" placeholder="如：成都 · 武侯区">
-            </div>
-            <div class="form-field form-field--full">
-              <label for="message">简单说说你的需求（选填）</label>
-              <textarea id="message" name="message" rows="3" placeholder="户型、面积、喜欢的风格，或任何你在意的细节"></textarea>
-            </div>
-          </div>
-          <label class="form-consent">
-            <input id="consent" name="consent" type="checkbox" value="同意" required>
-            <span>我已阅读并同意<a href="/privacy" target="_blank" rel="noopener">隐私说明</a>，同意将以上信息用于本次设计咨询。</span>
-          </label>
-          <p class="form-note">${footnote}</p>
-          <button class="booking-submit" type="submit">${escapeHtml(site.contact.submitText)}</button>
-          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-        </form>
-        <div class="form-success" id="form-success" role="status" aria-live="polite">
-          <span class="form-success__mark">${ICONS.check}</span>
-          <h4>${escapeHtml(site.contact.successTitle)}</h4>
-          <p>${escapeHtml(site.contact.successText)}</p>
+        <div class="booking-form-wrap" data-booking-wrap>
+          ${bookingForm(site, "contact")}
+          ${bookingSuccess(site)}
         </div>
       </div>
     </div>
   </div>
 </section>`;
+}
+
+function bookingModal(site) {
+  return `<div class="booking-modal" id="booking-modal" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title" aria-hidden="true">
+  <div class="booking-modal__inner">
+    <button class="booking-modal__close" type="button" aria-label="关闭预约表单">${ICONS.close}</button>
+    <div class="booking-modal__head">
+      <p class="eyebrow">预约设计咨询</p>
+      <h2 id="booking-modal-title">先聊聊你的家。</h2>
+      <p>留下联系方式与大致需求，我们会尽快与你确认沟通时间。</p>
+    </div>
+    <div class="booking-form-wrap" data-booking-wrap>
+      ${bookingForm(site, "modal")}
+      ${bookingSuccess(site)}
+    </div>
+  </div>
+</div>`;
 }
 
 function factorySection(factory) {
@@ -734,6 +762,7 @@ function pageShell({ site, title, description, canonicalPath, image, imageWidth,
     ${body}
   </main>
   ${footer(site, true)}
+  ${bookingModal(site)}
   <script src="/main.js" defer></script>
 </body>
 </html>`;
@@ -766,7 +795,7 @@ function detailCta(site, text) {
       <p class="eyebrow eyebrow--light">NEXT / 下一步</p>
       <h2>${escapeHtml(text)}</h2>
     </div>
-    <a class="btn btn--light" href="/#contact">预约一次设计沟通 ${ICONS.arrow}</a>
+    <a class="btn btn--light" href="/#contact" data-booking-open>预约一次设计沟通 ${ICONS.arrow}</a>
   </div>`;
 }
 
@@ -1182,6 +1211,7 @@ export function renderHome({ site, projects: projectsList, materials, factory })
   </main>
   ${footer(site, false)}
   ${materialModal()}
+  ${bookingModal(site)}
   <script type="application/json" id="materials-data">${JSON.stringify(materialData).replace(/</g, "\\u003c")}</script>
   <script src="/main.js" defer></script>
 </body>
@@ -1229,6 +1259,7 @@ export function renderPrivacy({ site, privacy }) {
     </div>
   </main>
   ${footer(site, true)}
+  ${bookingModal(site)}
   <script src="/main.js" defer></script>
 </body>
 </html>`;
@@ -1260,6 +1291,7 @@ export function render404({ site }) {
     </div>
   </main>
   ${footer(site, true)}
+  ${bookingModal(site)}
   <script src="/main.js" defer></script>
 </body>
 </html>`;
@@ -1292,6 +1324,7 @@ export function renderThanks({ site }) {
     </div>
   </main>
   ${footer(site, true)}
+  ${bookingModal(site)}
   <script src="/main.js" defer></script>
 </body>
 </html>`;
