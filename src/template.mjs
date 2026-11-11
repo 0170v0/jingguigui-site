@@ -27,7 +27,8 @@ function attr(value = "") {
 }
 
 function url(base, path) {
-  return new URL(path, base.endsWith("/") ? base : `${base}/`).href;
+  const href = new URL(path, base.endsWith("/") ? base : `${base}/`).href;
+  return href.replace(/\.html$/, "");
 }
 
 function navLinks(site, solid) {

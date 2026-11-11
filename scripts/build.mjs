@@ -191,7 +191,7 @@ function sitemapXml(site, projects, materials) {
 ${pages
   .map(
     (page) => `  <url>
-    <loc>${page.loc}</loc>
+    <loc>${page.loc.replace(/\.html$/, "")}</loc>
     <lastmod>${buildDate}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
