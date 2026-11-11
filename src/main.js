@@ -442,16 +442,16 @@
       const success = data.success === true || data.success === "true";
       const message = String(data.message || "");
 
-      if (!response.ok || !success) {
-        throw new Error(message || "提交失败");
-      }
-
       if (/activation|activate|激活/i.test(message)) {
         showFormStatus(
-          "预约信息已发送，但接收邮箱还没有完成 FormSubmit 激活。请检查邮箱中的激活邮件；完成激活后，再提交一次即可正常收到。",
+          "预约表单还需要完成一次邮箱激活。请检查接收邮箱中的 FormSubmit 激活邮件；完成激活后，再提交一次即可正常收到。",
           true
         );
         return;
+      }
+
+      if (!response.ok || !success) {
+        throw new Error(message || "提交失败");
       }
 
       showFormSuccess();
