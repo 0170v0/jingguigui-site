@@ -6,6 +6,7 @@ Thumbs.db
 .env
 .env.*
 .wrangler/
+NUL
 
 # 本地 QA / 截图临时文件（不进入发布仓库）
 preview/
