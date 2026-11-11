@@ -1,0 +1,786 @@
+# =========================================================
+# 鲸柜柜家居 · Pages CMS 配置
+# 在 https://app.pagescms.org 登录 GitHub 后即可可视化编辑本仓库内容。
+# 上传的图片会进入 public/images/，内容里的路径写为 /images/文件名。
+# =========================================================
+
+media:
+  input: public/images
+  output: /images
+  rename: safe
+  extensions:
+    - jpg
+    - jpeg
+    - png
+    - webp
+    - avif
+
+content:
+  # -------------------------------------------------------
+  # 网站全局内容
+  # -------------------------------------------------------
+  - name: site
+    label: 网站内容
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: brand
+        label: 品牌信息
+        type: object
+        fields:
+          - name: name
+            label: 品牌简称
+            type: string
+            required: true
+          - name: fullName
+            label: 公司全称
+            type: string
+            required: true
+          - name: english
+            label: 英文名
+            type: string
+          - name: tagline
+            label: 品牌一句话
+            type: string
+
+      - name: seo
+        label: 搜索引擎信息
+        type: object
+        fields:
+          - name: title
+            label: 浏览器标题
+            type: string
+            required: true
+            description: 建议 30–60 个字符，包含“成都”“全屋定制”等关键词。
+          - name: description
+            label: 搜索摘要
+            type: text
+            required: true
+            description: 建议 80–160 个字符，会显示在搜索结果中。
+          - name: keywords
+            label: 关键词
+            type: string
+            description: 用英文逗号分隔，影响有限，保持简洁即可。
+          - name: siteUrl
+            label: 网站正式地址
+            type: string
+            required: true
+            description: 例如 https://www.jingguigui.com，上线后不要带结尾斜杠。
+          - name: ogImage
+            label: 分享缩略图
+            type: image
+            description: 微信、社交平台分享时显示的图片，建议 1200×630。
+
+      - name: hero
+        label: 首屏
+        type: object
+        fields:
+          - name: eyebrow
+            label: 顶部小字
+            type: string
+          - name: title
+            label: 主标题
+            type: text
+            required: true
+            description: 换行会保留，建议两行。
+          - name: subtitle
+            label: 副标题
+            type: text
+          - name: primaryCta
+            label: 主按钮文字
+            type: string
+          - name: secondaryCta
+            label: 次按钮文字
+            type: string
+          - name: image
+            label: 首屏大图
+            type: image
+            required: true
+          - name: alt
+            label: 首屏图片说明
+            type: string
+            description: 描述图片内容，方便搜索引擎和无障碍阅读。
+          - name: note
+            label: 底部小字
+            type: string
+
+      - name: intro
+        label: 品牌主张
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+          - name: title
+            label: 大标题
+            type: text
+            required: true
+          - name: text
+            label: 正文
+            type: text
+          - name: facts
+            label: 数据亮点
+            type: object
+            list:
+              min: 0
+              max: 4
+              collapsible:
+                collapsed: false
+                summary: "{value} {label}"
+            fields:
+              - name: value
+                label: 数值
+                type: string
+              - name: label
+                label: 说明
+                type: string
+
+      - name: about
+        label: 关于我们
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+          - name: title
+            label: 大标题
+            type: text
+            required: true
+          - name: paragraphs
+            label: 正文段落
+            type: text
+            list: true
+            description: 每段一条。
+          - name: signature
+            label: 落款
+            type: string
+          - name: image
+            label: 主图
+            type: image
+          - name: alt
+            label: 主图说明
+            type: string
+          - name: detailImage
+            label: 细节图
+            type: image
+          - name: detailAlt
+            label: 细节图说明
+            type: string
+          - name: caption
+            label: 图片旁注
+            type: string
+          - name: badges
+            label: 关键词标签
+            type: string
+            list:
+              min: 0
+              max: 6
+
+      - name: series
+        label: 产品系列
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+          - name: title
+            label: 大标题
+            type: text
+            required: true
+          - name: description
+            label: 说明
+            type: text
+          - name: items
+            label: 系列卡片
+            type: object
+            list:
+              min: 1
+              max: 8
+              collapsible:
+                collapsed: true
+                summary: "{number} {name}"
+            fields:
+              - name: number
+                label: 序号
+                type: string
+              - name: name
+                label: 系列名称
+                type: string
+                required: true
+              - name: english
+                label: 英文名
+                type: string
+              - name: filter
+                label: 对应案例分类
+                type: select
+                required: true
+                options:
+                  - 衣柜
+                  - 厨房
+                  - 客厅
+                  - 多功能
+                description: 用于关联同分类案例；产品卡现在直接进入产品详情页。
+              - name: description
+                label: 介绍
+                type: text
+              - name: features
+                label: 特点
+                type: string
+                list:
+                  min: 0
+                  max: 5
+              - name: image
+                label: 配图
+                type: image
+              - name: alt
+                label: 配图说明
+                type: string
+              - name: slug
+                label: 页面地址
+                type: string
+                required: true
+                pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+                description: 用于 /products/<slug>.html，只用小写字母、数字和连字符。
+              - name: lead
+                label: 详情页导语
+                type: text
+              - name: paragraphs
+                label: 详情页正文
+                type: string
+                list:
+                  min: 0
+                  max: 4
+              - name: suitable
+                label: 适合空间
+                type: string
+                list:
+                  min: 0
+                  max: 6
+              - name: details
+                label: 设计要点
+                type: object
+                list:
+                  min: 0
+                  max: 6
+                  collapsible:
+                    collapsed: true
+                    summary: "{title}"
+                fields:
+                  - name: title
+                    label: 小标题
+                    type: string
+                  - name: text
+                    label: 说明
+                    type: text
+              - name: materialSlugs
+                label: 常用板材
+                type: string
+                list:
+                  min: 0
+                  max: 6
+                description: 填写板材 slug，如 particle-board、plywood、osb、rubberwood。
+
+      - name: philosophy
+        label: 设计理念
+        type: object
+        fields:
+          - name: quote
+            label: 引言
+            type: text
+            required: true
+            description: 换行会保留，建议两行。
+          - name: caption
+            label: 落款
+            type: string
+          - name: image
+            label: 背景图
+            type: image
+          - name: alt
+            label: 背景图说明
+            type: string
+
+      - name: process
+        label: 交付流程
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+          - name: title
+            label: 大标题
+            type: text
+            required: true
+          - name: description
+            label: 说明
+            type: text
+          - name: steps
+            label: 流程步骤
+            type: object
+            list:
+              min: 1
+              max: 8
+              collapsible:
+                collapsed: true
+                summary: "{number} {title}"
+            fields:
+              - name: number
+                label: 序号
+                type: string
+              - name: title
+                label: 步骤名称
+                type: string
+                required: true
+              - name: text
+                label: 说明
+                type: text
+
+      - name: projectsSection
+        label: 空间灵感
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+          - name: title
+            label: 大标题
+            type: text
+            required: true
+          - name: description
+            label: 说明
+            type: text
+          - name: note
+            label: 底部备注
+            type: string
+            description: 例如“图片为设计意向示意”。替换成真实案例后可修改或清空。
+          - name: filters
+            label: 筛选分类
+            type: string
+            list: true
+            description: 第一项必须是“全部”；其余必须与案例的“分类”一致。
+
+      - name: craft
+        label: 材质与工艺
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+          - name: title
+            label: 大标题
+            type: text
+            required: true
+          - name: description
+            label: 说明
+            type: text
+          - name: image
+            label: 配图
+            type: image
+          - name: alt
+            label: 配图说明
+            type: string
+          - name: items
+            label: 工艺条目
+            type: object
+            list:
+              min: 1
+              max: 8
+              collapsible:
+                collapsed: true
+                summary: "{number} {title}"
+            fields:
+              - name: number
+                label: 序号
+                type: string
+              - name: title
+                label: 标题
+                type: string
+                required: true
+              - name: text
+                label: 说明
+                type: text
+
+      - name: contact
+        label: 预约与联系
+        type: object
+        fields:
+          - name: eyebrow
+            label: 小标题
+            type: string
+          - name: title
+            label: 大标题
+            type: text
+            required: true
+          - name: description
+            label: 说明
+            type: text
+          - name: serviceArea
+            label: 服务范围
+            type: string
+          - name: response
+            label: 提交后提示
+            type: string
+          - name: address
+            label: 沟通地址说明
+            type: string
+            description: 没有公开门店时可写“预约确认后发送”。
+          - name: formEmail
+            label: 预约接收邮箱
+            type: string
+            description: 填好后表单才会真正发送。首次使用需在 FormSubmit 邮件里点一次激活链接。
+          - name: formNote
+            label: 表单隐私提示
+            type: text
+          - name: submitText
+            label: 提交按钮文字
+            type: string
+          - name: successTitle
+            label: 提交成功标题
+            type: string
+          - name: successText
+            label: 提交成功说明
+            type: text
+
+      - name: footer
+        label: 页脚
+        type: object
+        fields:
+          - name: statement
+            label: 品牌短句
+            type: string
+          - name: icp
+            label: ICP备案号
+            type: string
+            description: 使用中国大陆服务器时填写，例如“蜀ICP备XXXXXXXX号”；海外托管可留空。
+          - name: copyright
+            label: 版权信息
+            type: string
+
+  # -------------------------------------------------------
+  # 空间案例
+  # -------------------------------------------------------
+  - name: projects
+    label: 空间案例
+    type: collection
+    path: content/projects
+    format: json
+    filename: "{primary}.json"
+    view:
+      primary: title
+      sort: order
+    fields:
+      - name: title
+        label: 案例标题
+        type: string
+        required: true
+      - name: category
+        label: 分类
+        type: select
+        required: true
+        options:
+          - 衣柜
+          - 厨房
+          - 客厅
+          - 多功能
+        description: 必须与“空间灵感 → 筛选分类”中的某一项完全一致。
+      - name: cover
+        label: 封面图
+        type: image
+        required: true
+        description: 建议 1600×1200 以上，横图或接近 4:3，避免文字水印。
+      - name: alt
+        label: 图片说明
+        type: string
+        required: true
+        description: 用一句话描述画面，方便搜索引擎和无障碍阅读。
+      - name: description
+        label: 案例说明
+        type: text
+        required: true
+      - name: scope
+        label: 项目范围
+        type: string
+        required: true
+        description: 例如“电视墙 / 玄关柜 / 餐边柜”。
+      - name: slug
+        label: 页面地址
+        type: string
+        required: true
+        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        description: 用于 /cases/<slug>.html；建议与文件名一致，如 01-living-room。
+      - name: location
+        label: 所在城市/区域
+        type: string
+        required: true
+        description: 公网仅展示到城市或区，不写业主门牌。
+      - name: address
+        label: 详细地址说明
+        type: string
+        required: true
+        description: 建议填“详细地址预约后提供”，保护业主隐私。
+      - name: locationNote
+        label: 地址隐私说明
+        type: text
+        required: true
+      - name: style
+        label: 风格
+        type: string
+        required: true
+      - name: highlights
+        label: 设计重点
+        type: string
+        list:
+          min: 1
+          max: 5
+      - name: materials
+        label: 使用板材
+        type: string
+        list:
+          min: 0
+          max: 6
+        description: 填写板材名称，如颗粒板、多层板。
+      - name: story
+        label: 项目故事
+        type: string
+        list:
+          min: 1
+          max: 4
+      - name: order
+        label: 排序
+        type: number
+        description: 数字越小越靠前。
+      - name: draft
+        label: 草稿（不发布）
+        type: boolean
+        description: 打开后构建时会跳过这个案例。
+
+  # -------------------------------------------------------
+  # 板材系统
+  # -------------------------------------------------------
+  - name: materials
+    label: 板材系统
+    type: file
+    path: content/materials.json
+    format: json
+    fields:
+      - name: eyebrow
+        label: 小标题
+        type: string
+      - name: title
+        label: 大标题
+        type: text
+        required: true
+      - name: description
+        label: 说明
+        type: text
+      - name: note
+        label: 底部说明
+        type: text
+      - name: items
+        label: 板材条目
+        type: object
+        list:
+          min: 1
+          max: 8
+          collapsible:
+            collapsed: true
+            summary: "{number} {name}"
+        fields:
+          - name: slug
+            label: 页面地址
+            type: string
+            required: true
+            pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+            description: 用于 /materials/<slug>.html。
+          - name: name
+            label: 板材名称
+            type: string
+            required: true
+          - name: english
+            label: 英文名
+            type: string
+          - name: number
+            label: 序号
+            type: string
+          - name: swatch
+            label: 纹理样式
+            type: select
+            required: true
+            options:
+              - particle
+              - plywood
+              - osb
+              - rubber
+          - name: priceLevel
+            label: 定位
+            type: string
+          - name: summary
+            label: 一句话说明
+            type: text
+          - name: brands
+            label: 常用品牌
+            type: string
+            list:
+              min: 0
+              max: 6
+          - name: core
+            label: 芯材说明
+            type: text
+          - name: advantages
+            label: 优点
+            type: string
+            list:
+              min: 0
+              max: 6
+          - name: cautions
+            label: 注意事项
+            type: string
+            list:
+              min: 0
+              max: 6
+          - name: spaces
+            label: 适合空间
+            type: string
+            list:
+              min: 0
+              max: 8
+          - name: finish
+            label: 饰面说明
+            type: string
+          - name: image
+            label: 纹理图
+            type: image
+          - name: imageAlt
+            label: 纹理图说明
+            type: string
+          - name: imageNote
+            label: 图片备注
+            type: string
+
+  # -------------------------------------------------------
+  # 自有厂区
+  # -------------------------------------------------------
+  - name: factory
+    label: 自有厂区
+    type: file
+    path: content/factory.json
+    format: json
+    fields:
+      - name: eyebrow
+        label: 小标题
+        type: string
+      - name: title
+        label: 大标题
+        type: text
+        required: true
+      - name: name
+        label: 厂区名称
+        type: string
+        required: true
+      - name: location
+        label: 所在位置
+        type: string
+        required: true
+      - name: lead
+        label: 导语
+        type: text
+      - name: paragraphs
+        label: 正文
+        type: string
+        list:
+          min: 0
+          max: 4
+      - name: responsibilities
+        label: 职责分工
+        type: object
+        list:
+          min: 0
+          max: 6
+          collapsible:
+            collapsed: true
+            summary: "{label}"
+        fields:
+          - name: label
+            label: 主体
+            type: string
+          - name: text
+            label: 说明
+            type: text
+      - name: capabilities
+        label: 厂内工序
+        type: object
+        list:
+          min: 0
+          max: 6
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: title
+            label: 工序
+            type: string
+          - name: text
+            label: 说明
+            type: text
+      - name: stats
+        label: 数据
+        type: object
+        list:
+          min: 0
+          max: 6
+        fields:
+          - name: value
+            label: 数值
+            type: string
+          - name: label
+            label: 说明
+            type: string
+      - name: note
+        label: 底部说明
+        type: text
+
+  # -------------------------------------------------------
+  # 隐私说明
+  # -------------------------------------------------------
+  - name: privacy
+    label: 隐私说明
+    type: file
+    path: content/privacy.json
+    format: json
+    fields:
+      - name: title
+        label: 页面标题
+        type: string
+        required: true
+      - name: description
+        label: 搜索摘要
+        type: text
+      - name: updated
+        label: 最近更新
+        type: string
+        description: 例如“2026 年 11 月 11 日”。
+      - name: intro
+        label: 开头说明
+        type: text
+      - name: sections
+        label: 条款段落
+        type: object
+        list:
+          min: 1
+          max: 20
+          collapsible:
+            collapsed: true
+            summary: "{heading}"
+        fields:
+          - name: heading
+            label: 小标题
+            type: string
+            required: true
+          - name: paragraphs
+            label: 正文段落
+            type: text
+            list: true
+          - name: list
+            label: 列表项
+            type: string
+            list: true

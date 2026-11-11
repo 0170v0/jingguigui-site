@@ -1,0 +1,139 @@
+{
+  "eyebrow": "07 / 板材系统",
+  "title": "四种板材，\n四种合适的用法。",
+  "description": "板材没有绝对的好坏，只有适不适合。按空间、预算和使用方式选，而不是只看名字。",
+  "note": "板材品牌、环保等级与饰面按项目配置，正式报价与合同为准。图片为应用场景示意。",
+  "items": [
+    {
+      "slug": "particle-board",
+      "name": "颗粒板",
+      "english": "PARTICLE BOARD",
+      "number": "01",
+      "swatch": "particle",
+      "priceLevel": "常用",
+      "summary": "木材碎料热压而成，表面平整、尺寸稳定，是全屋定制里最常见的柜体板材。",
+      "brands": [
+        "鲁丽精板",
+        "大雪杉精板"
+      ],
+      "core": "将木材碎料施胶后热压成板，双面贴三聚氰胺饰面。",
+      "advantages": [
+        "表面平整，适合大面积柜门",
+        "尺寸稳定，不易变形",
+        "花色多，性价比高"
+      ],
+      "cautions": [
+        "防潮性一般，厨卫明水区不建议直接使用",
+        "握钉力不如多层板，重五金需加固"
+      ],
+      "spaces": [
+        "衣柜",
+        "书柜",
+        "电视柜",
+        "鞋柜"
+      ],
+      "finish": "三聚氰胺饰面 / PET 门板按方案选配",
+      "image": "/images/material-particle.jpg",
+      "imageAlt": "颗粒板碎料纹理示意",
+      "imageNote": "应用场景示意"
+    },
+    {
+      "slug": "plywood",
+      "name": "多层板",
+      "english": "PLYWOOD",
+      "number": "02",
+      "swatch": "plywood",
+      "priceLevel": "中高",
+      "summary": "多层单板纵横交错胶合，防潮与握钉力更好，适合厨房、浴室柜等对稳定性要求高的空间。",
+      "brands": [
+        "鲁丽精板",
+        "大雪杉精板"
+      ],
+      "core": "奇数层单板纵横铺装、胶合热压，常见 9 / 12 / 18mm。",
+      "advantages": [
+        "防潮性较好",
+        "握钉力强，适合承重",
+        "结构稳定，适合厨卫"
+      ],
+      "cautions": [
+        "价格高于颗粒板",
+        "对封边工艺要求更高，边缘需做好防水"
+      ],
+      "spaces": [
+        "厨房橱柜",
+        "浴室柜",
+        "阳台柜",
+        "衣柜"
+      ],
+      "finish": "三聚氰胺饰面 / 木皮 / PET",
+      "image": "/images/material-plywood.jpg",
+      "imageAlt": "多层板层板纹理示意",
+      "imageNote": "应用场景示意"
+    },
+    {
+      "slug": "osb",
+      "name": "欧松板",
+      "english": "OSB",
+      "number": "03",
+      "swatch": "osb",
+      "priceLevel": "中高",
+      "summary": "大片刨花定向铺装，结构强度高，纹理粗犷，适合做柜体、门板与背景墙的结构或饰面。",
+      "brands": [
+        "鲁丽精板",
+        "大雪杉精板"
+      ],
+      "core": "大片刨花定向铺装后热压，常见为素板或饰面板。",
+      "advantages": [
+        "结构强度高",
+        "握钉力好",
+        "纹理有辨识度"
+      ],
+      "cautions": [
+        "素板表面较粗，通常需要饰面或涂装",
+        "封边与收口要求高，否则容易显毛糙"
+      ],
+      "spaces": [
+        "柜体结构",
+        "门板",
+        "背景墙",
+        "书桌"
+      ],
+      "finish": "饰面板 / 木蜡油 / 烤漆按方案选配",
+      "image": "/images/material-osb.jpg",
+      "imageAlt": "欧松板刨花纹理示意",
+      "imageNote": "应用场景示意"
+    },
+    {
+      "slug": "rubberwood",
+      "name": "橡胶木板",
+      "english": "RUBBERWOOD",
+      "number": "04",
+      "swatch": "rubber",
+      "priceLevel": "中高",
+      "summary": "橡胶木实木拼板，质感温润、可做造型，适合开放格、台面、门板与可见家具。",
+      "brands": [
+        "按项目批次选配"
+      ],
+      "core": "橡胶木指接或直拼板，按使用部位选用不同等级。",
+      "advantages": [
+        "实木质感，触感温润",
+        "可铣型、可做圆角",
+        "适合开放格与可见部位"
+      ],
+      "cautions": [
+        "对湿度变化敏感，需做好含水率控制",
+        "大面积使用需预留伸缩，避免开裂变形"
+      ],
+      "spaces": [
+        "开放格",
+        "台面",
+        "门板",
+        "家具"
+      ],
+      "finish": "木蜡油 / 清漆 / 烤漆",
+      "image": "/images/material-rubber.jpg",
+      "imageAlt": "橡胶木板细木纹示意",
+      "imageNote": "应用场景示意"
+    }
+  ]
+}

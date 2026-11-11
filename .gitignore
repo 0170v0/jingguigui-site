@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+.wrangler/
+
+# 本地 QA / 截图临时文件（不进入发布仓库）
+preview/
+shot-*.png
+sheet.html
+sheet.png
+_*.mjs
+qa-results.json
