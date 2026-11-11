@@ -62,14 +62,16 @@ docs/
   图片与内容管理.md       换图、加案例、改板材/厂区、改文案
 ```
 
-## 上线前必须处理的 4 件事
+## 上线后仍需补充
 
-1. **接收邮箱**：把 `content/site.json` 里的 `contact.formEmail` 改成真实邮箱，重新构建并部署；第一次提交后到邮箱点 FormSubmit 激活链接。未填写时表单会明确提示“尚未接通”，不会假装提交成功。
-2. **正式域名**：`seo.siteUrl` 当前为 `https://jingguigui.cn`；换域名时同步修改，否则 canonical、OG、sitemap 仍指向旧地址。
-3. **真实图片**：`public/images/` 目前是 Unsplash 设计意向图。换成公司真实项目照片，并同步修改对应 JSON 的 `alt`；换完后把 `projectsSection.note` 里的“图片为设计意向示意”改掉或清空。
-4. **ICP 备案号**：如果用中国大陆服务器 / CDN，必须完成 ICP 备案，并把备案号填到 `footer.icp`；用 Cloudflare Pages 等海外托管可留空。
+1. **真实图片**：`public/images/` 目前是 Unsplash 设计意向图。换成公司真实项目照片，并同步修改对应 JSON 的 `alt`；换完后把 `projectsSection.note` 里的“图片为设计意向示意”改掉或清空。
+2. **ICP 备案号**：如果用中国大陆服务器 / CDN，必须完成 ICP 备案，并把备案号填到 `footer.icp`；用 Cloudflare Pages 等海外托管可留空。
+3. **案例地址**：公网默认只显示“成都 · 详细地址预约后提供”，避免公开业主门牌；如要展示区级地址，可在 Pages CMS 的案例里补 `location`。
+4. **内容备份**：所有内容都在 GitHub 仓库里；改稿前可在 GitHub 查看历史，误删可回退。
 
 ## 部署（最短路径）
+
+当前仓库已配置 GitHub Actions 自动部署：push 到 `main` 后，`.github/workflows/deploy.yml` 会构建并发布到 Cloudflare Pages 项目 `jingguigui`。下面的手动步骤仅作为备用说明。
 
 只想先上线、暂时不用 GitHub：在 Cloudflare Pages 里选 **Upload assets**，把 `dist/` 整个拖进去即可，详见指南 3.1。长期维护推荐下面的 Git 自动部署。
 
@@ -86,8 +88,11 @@ docs/
 - 已完成：首页、4 个产品详情、8 个案例详情、4 个板材详情、厂区页、隐私页、404、感谢页、sitemap、robots、Cloudflare 头/重定向、Pages CMS 配置。
 - 已实现：页眉/logo 放大、产品/案例卡直达详情页、案例分类/地址/相近案例、板材桌面弹层 + 手机子页、厂区介绍。
 - 交互自检：首页筛选、案例跳转、板材弹层开关与焦点、移动菜单、表单校验、横向溢出均通过。
-- 域名：`jingguigui.cn` 的 Apex 已生效；`www` 的 Cloudflare 证书仍在签发，生效前请使用 Apex 地址。
-- 仍需补充：接收预约邮箱（`contact.formEmail`）、真实项目照片与板材实拍图、GitHub 仓库与 Pages CMS 登录。
+- 域名：<https://jingguigui.cn> 与 <https://www.jingguigui.cn> 均已生效，HTTPS 正常。
+- 预约表单：接收邮箱 `1994869520@qq.com`，FormSubmit 已激活并实测成功。
+- 自动部署：GitHub 仓库 `0170v0/jingguigui-site`；push `main` 后由 GitHub Actions 构建并部署到 Cloudflare Pages。
+- 内容后台：Pages CMS 已接入，<https://app.pagescms.org/0170v0/jingguigui-site/main>。
+- 仍需补充：真实项目照片与板材实拍图、ICP 备案号（如使用国内托管）。
 - 图片来源：Unsplash 免费图 + 程序生成的板材纹理，仅作设计意向示意，不在页面中声称是公司实景。
 
 ## 内容修改的两种方式
